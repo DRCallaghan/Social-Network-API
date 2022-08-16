@@ -1,27 +1,28 @@
 const { Schema, model } = require('mongoose');
-const reactionSchema = require('./Reaction');
 
-// Schema to create thought model
-const thoughtSchema = new Schema(
+// Schema to create Reaction model
+const reactionSchema = new Schema(
     {
-        thoughtText: {
+        reactionId: {
+            type: Schema.Types.ObjectId,
+            default: () => new Types.ObjectId(),
+        },
+        reactionBody: {
             type: String,
             required: true,
             min: 1,
             max: 280,
         },
-        createdAt: {
-            type: Date,
-            default: Date.now(),
-        },
-        // foreign key for this thought's user
+        // foreign key for this reaction's user
         username: {
             type: String,
             required: true,
             ref: 'User',
         },
-        // self-referential foreign key for this user's friends
-        reactions: [reactionSchema],
+        createdAt: {
+            type: Date,
+            default: Date.now(),
+        },
     },
     // including virtuals in JSON responses
     {
@@ -34,7 +35,7 @@ const thoughtSchema = new Schema(
 );
 
 // virtual to get formatted timestamp in the api responses
-thoughtSchema
+reactionSchema
     .virtual('timestamp')
     .get(function () {
         // months array to convert .getMonth() to the actual month
@@ -43,14 +44,4 @@ thoughtSchema
         return `${months[this.createdAt.getMonth()]} ${this.createdAt.getDate()}, ${this.createdAt.getFullYear()} at ${this.createdAt.getHours()}:${this.createdAt.getMinutes()}:${this.createdAt.getSeconds()}`
     });
 
-// virtual to get the number of reactions on a thought in the api responses
-thoughtSchema
-    .virtual('reactionCount')
-    .get(function () {
-        return this.reactions.length;
-    });
-
-// creating Thought to export
-const Thought = model('thought', thoughtSchema);
-
-module.exports = Thought;
+module.exports = reactionSchema;
