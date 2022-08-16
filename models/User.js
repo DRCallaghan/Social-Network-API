@@ -20,14 +20,14 @@ const userSchema = new Schema(
         thoughts: [
             {
                 type: Schema.Types.ObjectId,
-                ref: 'Thoughts',
+                ref: 'Thought',
             },
         ],
         // self-referential foreign key for this user's friends
         friends: [
             {
                 type: Schema.Types.ObjectId,
-                ref: 'Users',
+                ref: 'User',
             },
         ],
     },
@@ -41,24 +41,12 @@ const userSchema = new Schema(
 );
 
 // virtual to log friend count in the api responses
-userSchema.virtual('friendCount').get(function () {
-    // using aggregate to make use of $count
-    this.aggregate([
-        {
-            $match: { _id: this._id },
-        },
-        {
-            $unwind: '$friends',
-        },
-        {
-            $group: {
-                _id: null,
-                friend_count: { $count: {} },
-            },
-        },
-    ])
-        .then((numberOfFriends) => numberOfFriends)
-});
+userSchema
+    .virtual('friendCount')
+    //getter
+    .get(function () {
+        return this.friends.length;
+    });
 
 // creating User to export
 const User = model('user', userSchema);
