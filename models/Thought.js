@@ -39,8 +39,13 @@ thoughtSchema
     .get(function () {
         // months array to convert .getMonth() to the actual month
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        // internal function to add leading zeros if necessary
+        function addZero(i) {
+            if (i < 10) { i = "0" + i }
+            return i;
+        }
         // MMMM DD, YYYY at HH:MM:SS, returned in 24h time
-        return `${months[this.createdAt.getMonth()]} ${this.createdAt.getDate()}, ${this.createdAt.getFullYear()} at ${this.createdAt.getHours()}:${this.createdAt.getMinutes()}:${this.createdAt.getSeconds()}`
+        return `${months[this.createdAt.getMonth()]} ${this.createdAt.getDate()}, ${this.createdAt.getFullYear()} at ${addZero(this.createdAt.getHours())}:${addZero(this.createdAt.getMinutes())}:${addZero(this.createdAt.getSeconds())}`
     });
 
 // virtual to get the number of reactions on a thought in the api responses

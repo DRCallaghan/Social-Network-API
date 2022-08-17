@@ -1,9 +1,10 @@
-const { Thought, User } = require('../models');
+const Thought = require('../models/Thought');
+const User = require('../models/User');
 
 module.exports = {
     // Get all thoughts
     getThoughts(req, res) {
-        Thoguht.find()
+        Thought.find()
             .then(async (thoughts) => {
                 const thoughtObj = {
                     thoughts,
@@ -37,7 +38,7 @@ module.exports = {
         Thought.create(req.body)
             .then((thought) =>
                 User.findOneAndUpdate(
-                    { _id: req.body.userId },
+                    { username: req.body.username },
                     { $push: { thoughts: thought._id } },
                     { new: true }
                 )

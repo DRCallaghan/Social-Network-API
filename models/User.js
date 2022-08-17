@@ -14,7 +14,7 @@ const userSchema = new Schema(
             unique: true,
             required: true,
             // regex to match an email address
-            match: "\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b",
+            // match: "\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b",
         },
         // foreign key for this user's thoughts
         thoughts: [
