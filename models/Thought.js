@@ -20,7 +20,7 @@ const thoughtSchema = new Schema(
             required: true,
             ref: 'User',
         },
-        // self-referential foreign key for this user's friends
+        // array of nested docs for a reaction schema
         reactions: [reactionSchema],
     },
     // including virtuals in JSON responses
