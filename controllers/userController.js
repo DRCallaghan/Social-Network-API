@@ -20,7 +20,6 @@ module.exports = {
     getSingleUser(req, res) {
         User.findOne({ _id: req.params.userId })
             .select('-__v')
-            .lean()
             .then(async (user) =>
                 !user
                     ? res.status(404).json({ message: 'No user with that ID' })
@@ -59,10 +58,9 @@ module.exports = {
             .then((user) =>
                 !user
                     ? res.status(404).json({ message: 'No such user exists' })
-                    : Thought.updateMany(
-                        { users: req.params.userId },
-                        { $pull: { users: req.params.userId } },
-                        { new: true }
+                    // deleting all that user's thoughts as well
+                    : Thought.deleteMany(
+                        { username: user.username },
                     )
             )
             .then((thought) =>
@@ -98,7 +96,7 @@ module.exports = {
     removeFriend(req, res) {
         User.findOneAndUpdate(
             { _id: req.params.userId },
-            { $pull: { friends: { _id: req.params.friendId } } },
+            { $pull: { friends: req.params.friendId } },
             { runValidators: true, new: true }
         )
             .then((user) =>

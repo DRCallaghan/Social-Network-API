@@ -20,7 +20,6 @@ module.exports = {
     getSingleThought(req, res) {
         Thought.findOne({ _id: req.params.thoughtId })
             .select('-__v')
-            .lean()
             .then(async (thought) =>
                 !thought
                     ? res.status(404).json({ message: 'No thought with that ID' })
@@ -36,6 +35,7 @@ module.exports = {
     // create a new thought
     createThought(req, res) {
         Thought.create(req.body)
+            // putting this new thought into the relevant user's thought array
             .then((thought) =>
                 User.findOneAndUpdate(
                     { username: req.body.username },
@@ -67,15 +67,20 @@ module.exports = {
     // delete a thought
     deleteThought(req, res) {
         Thought.findOneAndRemove({ _id: req.params.thoughtId })
-            .then((thought) =>
-                !thought
-                    ? res.status(404).json({ message: 'No such thought exists' })
-                    : res.json({ message: 'Thought successfully deleted' })
+            // removing this thought from the relevant user's thought array
+            .then(() =>
+                User.findOneAndUpdate(
+                    { thoughts: req.params.thoughtId },
+                    { $pull: { thoughts: req.params.thoughtId } },
+                    { new: true }
+                )
             )
-            .catch((err) => {
-                console.log(err);
-                res.status(500).json(err);
-            });
+            .then((response) =>
+                !response
+                    ? res.status(404).json({ message: 'Thought deleted but no such user found' })
+                    : res.json(response)
+            )
+            .catch((err) => res.status(500).json(err));
     },
 
     // add a reaction to a thought

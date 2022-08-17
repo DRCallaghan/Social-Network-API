@@ -1,4 +1,6 @@
-const { Schema, model } = require('mongoose');
+const { Schema, Types } = require('mongoose');
+// ObjectId() method for converting studentId string into an ObjectId for querying database
+const { ObjectId } = require('mongoose').Types;
 
 // Schema to create Reaction model
 const reactionSchema = new Schema(
