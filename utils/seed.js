@@ -1,6 +1,61 @@
 const connection = require('../config/connection');
-const { User, Thought } = require('../models');
-const getRandomUser = require('./data');
+const Thought = require('../models/Thought');
+const User = require('../models/User');
+
+const usernames = [
+    'Aaran',
+    'Aaren',
+    'Aarez',
+    'Aarman',
+    'Aaron',
+    'Aaron-James',
+    'Aarron',
+    'Abdisalam',
+    'Abdul',
+    'Abdul-Aziz',
+    'Abdulbasir',
+    'Abdulkadir',
+    'Abdulkarem',
+    'Smith',
+    'Jones',
+    'Coollastname',
+    'Zinedine',
+    'Zion',
+    'Zishan',
+    'Ziya',
+    'Ziyaan',
+    'Zohaib',
+    'Zohair',
+    'Zoubaeir',
+    'Zubair',
+    'Zubayr',
+    'Mark',
+    'Tamar',
+    'Farish',
+    'Sarah',
+    'Nathaniel',
+    'Parker',
+];
+
+let emails = [];
+
+usernames.forEach(el => {
+    emails.push(`${el}@mail.com`)
+});
+
+let users = [];
+
+// gets all users
+const getAllUsers = () => {
+    for (i = 0; i < usernames.length; i++) {
+        let user = {
+            username: usernames[i],
+            email: emails[i]
+        }
+        users.push(user);
+    }
+    return users;
+}
 
 connection.on('error', (err) => err);
 
@@ -13,13 +68,7 @@ connection.once('open', async () => {
     // drop existing thoughts if they exist
     await Thought.deleteMany({});
 
-    // create empty array to hold random users
-    const users = [];
-
-    // create 20 random users to be added to the empty users array above
-    for (let i = 0; i < 20; i++) {
-        users.push(getRandomUser());
-    }
+    getAllUsers();
 
     // add users to the collection once all 20 have been created
     await User.collection.insertMany(users);
